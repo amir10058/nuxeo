@@ -133,7 +133,10 @@ public class ElasticSearchNativePageProvider extends AbstractPageProvider<Docume
     private List<AggregateEsBase<? extends Bucket>> buildAggregates() {
         ArrayList<AggregateEsBase<? extends Bucket>> ret = new ArrayList<>(getAggregateDefinitions().size());
         for (AggregateDefinition def : getAggregateDefinitions()) {
-            ret.add(AggregateFactory.create(def, getSearchDocumentModel()));
+            AggregateEsBase<? extends Bucket> agg = AggregateFactory.create(def, getSearchDocumentModel());
+            if (!isSkipAggregates() || !agg.getSelection().isEmpty()) {
+                ret.add(AggregateFactory.create(def, getSearchDocumentModel()));
+            }
         }
         return ret;
     }
